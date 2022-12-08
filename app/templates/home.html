@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+     <form action="" method="post" name="add" enctype="multipart/form-data">
+        {{ form.csrf_token }}
+         {{ form.item_name(class_="form-control") }}
+         {{ form.price(class_="form-control") }}
+         {{ form.description(class_="form-control") }}
+         {{ form.image(required="required") }}
+         <input value="add" lay-submit lay-filter="login" style="width:100%;" type="submit">
+     </form>
+    {% if ds %}
+        {% for d in ds%}
+          <p> {{ d[0].item_name }}---<img src="data:;base64,{{ d[1] }}" ></p>
+        {% endfor %}
+    {% endif %}
+</body>
+</html>

@@ -1,0 +1,74 @@
+.register{
+    width: 500px;
+    margin:auto;
+    background-color: whitesmoke;
+}
+.user-background{
+    background-image: url("../image/1.png");
+    background-size: cover;
+    overflow: hidden;
+}
+.welcome{
+    background-image: url("../image/2.png");
+    background-size: cover;
+    overflow: hidden;
+    background-attachment: fixed;
+}
+.over{
+    overflow-y: scroll;
+}
+
+.item{
+    margin-top: 20px;
+    margin-bottom: 20px;
+
+}
+.image-container{
+    width: 95%;
+    margin: auto;
+    height: 60%;
+}
+img{
+    height: 100%;
+    width: 100%;
+}
+a{
+    color: black;
+    Text-decoration: none;
+}
+.card-body, .test{
+    background-color: #FDF5C4;
+}
+.detail-image{
+    height: 100%;
+    width: 90%;
+    margin: auto;
+}
+p{
+    text-align: justify;
+}
+.no-padding{
+    padding: 0;
+}
+.no-border{
+    border: none;
+}
+.refresh{
+    background-color: #248cf5;
+    line-height:1.6em;
+    margin-top:3px;
+    margin-left: 10px;
+    position: fixed;
+    float: right;
+    z-index:9999;
+}
+.refresh>i{
+     line-height: 38px;
+}
+img.item-image{
+    width: 100%;
+    height: auto;
+}
+.text-right{
+    text-align: right;
+}

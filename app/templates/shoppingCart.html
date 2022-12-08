@@ -1,0 +1,47 @@
+{% extends "userbase.html" %}
+{% block content %}
+    <br><br><br><br><br>
+    <div class="container container-back">
+        <div class="row">
+            {% for i in cart %}
+                <div class="col-sm-12 col-md-12 col-lg-12 item">
+                    <div class="card test">
+                        <div class="card-body row">
+                            <div class="col-12">
+                                <div class="row layui-row justify-content-center">
+                                    <div class=" layui-col-lg3 layui-col-md4 layui-col-sm5 layui-col-xs12">
+                                        <img class="item-image" src="data:;base64,{{ i[1] }}" >
+                                    </div>
+                                    <div class="layui-col-lg6 layui-col-md6 layui-col-sm6 layui-col-xs12">
+                                        <h2 class="card-title">{{ i[0].item_name }}</h2>
+                                        <p class="card-text">{{ i[0].description }}</p>
+                                        <br>
+                                        <p class="card-text">Unit price: {{ i[0].price }}$ / 500g</p>
+                                        <br>
+                                        <p class="card-text">Purchase quantity: {{ i[2] }} g</p>
+                                        <br>
+                                        <p class="card-text">Reception address: {{ i[0].destination }}</p>
+                                        <br>
+                                        <p class="card-text text-right">
+                                            Total payment:
+                                            <strong class="layui-font-20">{{ i[0].money }} $</strong>
+                                        </p>
+                                        <br>
+                                        <div class="justify-content-center">
+                                            <a  class="layui-btn layui-btn-primary layui-border-blue col-lg-3 col-md-4 col-sm-5" href="{{ url_for('purchaseCart', id=i[0].id) }}">
+                                                Purchase
+                                            </a>
+                                            <a class="layui-btn layui-btn-danger" href="{{ url_for('cancelCart', id=i[0].id) }}">
+                                                Cancel cart
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

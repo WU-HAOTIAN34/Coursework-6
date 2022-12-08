@@ -1,0 +1,51 @@
+{% extends "userbase.html" %}
+{% block content %}
+    <br><br><br><br><br>
+    <div class="container container-back">
+        <div class="row">
+            {% for i in item %}
+                <div class="col-sm-6 col-md-4 col-lg-3 item">
+                    {% if page == 1 %}
+                    <a href="{{url_for('itemDetail', id=i[0].id)}}">
+                    {% elif page == 2 %}
+                    <a href="{{url_for('itemDetail', id=i[0].item_id)}}">
+                    {% endif %}
+                        <div class="card card-body">
+                            <div class="card-body">
+                                <h2 class="card-title text-center">{{ i[0].item_name }}</h2>
+                                <div class="image-container">
+                                    <img class="item-image" src="data:;base64,{{ i[1] }}" >
+                                </div>
+                                <br>
+                                <div class="layui-row">
+                                    <div class="layui-col-lg6 layui-col-md6 layui-col-sm6 layui-col-xs6">
+                                        <p class="card-text">Price:</p>
+                                        <p class="card-text layui-font-14"> <strong>{{ i[0].price }}$ / 500g</strong></p>
+                                    </div>
+                                    {% if page == 1 %}
+                                        {% if i[2] == 0 %}
+                                            <a class="layui-btn layui-btn-normal layui-col-lg6 layui-col-md6 layui-col-sm6 layui-col-xs6 make-favor" id="{{ i[0].id }}">
+                                                <i class="iconfont">&#xe7ce;</i>
+                                                Normal
+                                            </a>
+                                        {% else %}
+                                            <a class="layui-btn layui-btn-danger layui-col-lg6 layui-col-md6 layui-col-sm6 layui-col-xs6 cancel-favor" id="{{ i[0].id }}">
+                                                <i class="iconfont">&#xe7ce;</i>
+                                                Favor
+                                            </a>
+                                        {% endif %}
+                                    {% elif page == 2 %}
+                                        <a class="layui-btn layui-btn-danger layui-col-lg6 layui-col-md6 layui-col-sm6 layui-col-xs6 cancel-favor" id="{{ i[0].id }}" href="{{ url_for('deleteFavor', id=i[0].id) }}">
+                                            <i class="iconfont">&#xe7ce;</i>
+                                            Cancel
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

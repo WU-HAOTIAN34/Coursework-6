@@ -1,0 +1,59 @@
+{% extends "userbase.html" %}
+{% block content %}
+    <script type="text/javascript" src="../static/lib/X-admin/js/xadmin.js"></script>
+    <link rel="stylesheet" href="../static/lib/X-admin/css/xadmin.css">
+    <script type="text/javascript" src="../static/lib/js/xcity.js"></script>
+    <br><br><br>
+    <div class="container container-back">
+        <div class="row card-body">
+            <div class="col-sm-12 col-md-6 col-lg-6 item card-body">
+                <div class="detail-image">
+                    <img class="item-image" src="data:;base64,{{ item[1] }}">
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-6 col-lg-6 item">
+                <div class="card card-body no-border">
+                    <div class="card-body">
+                        <h1 class="card-title text-center">{{ item[0].item_name }}</h1>
+                        <br>
+                        <p class="card-text layui-font-16 ">{{ item[0].description }}</p>
+                        <br><br>
+                        <p class="card-text layui-font-20 layui-font-red">Price: {{ item[0].price }}$ / 500g</p>
+                        <br>
+                        <form class="layui-form layui-col-md12  layui-form-pane card-body no-padding" name="purchase">
+                            {{ form.csrf_token }}
+                            <div>
+                                <div>Purchase quantity:&nbsp;&nbsp; /500g</div>
+                                {{ form.number(class_="form-control", id="number") }}
+                            </div>
+                            <br>
+                            <div class="layui-form-item x-city container no-padding card-body" id="start">
+                                <div class="row card-body no-padding">
+                                    <div class=" col-md-12 col-sm-12 col-lg-4 card-body">Reception address:</div>
+                                    <div class=" col-md-12 col-sm-12 col-lg-4">
+                                        {{ form.destination_province(class_="form-control", id="province") }}
+                                    </div>
+                                    <div class=" col-md-12 col-sm-12 col-lg-4">
+                                        {{ form.destination_city(class_="form-control", id="city") }}
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                        <br>
+                    </div>
+                </div>
+                <br><br>
+                <div class="row justify-content-center">
+                    <a  class="layui-btn layui-btn-primary layui-border-blue col-lg-3 col-md-4 col-sm-5 make-order" id="{{ item[0].id }}">
+                        Purchase
+                    </a>
+                    <a class="layui-btn layui-btn-danger col-lg-3 col-md-4 col-sm-5 make-cart " id="2{{ item[0].id }}">
+                        <i class="iconfont">&#xe698;</i>
+                        Add to cart
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="../static/lib/js/xcity.js"></script>
+{% endblock %}

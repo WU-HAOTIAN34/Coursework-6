@@ -1,0 +1,51 @@
+{% extends "indexbase.html" %}
+{% block content %}
+    <div class="left-nav">
+        <div id="side-nav">
+            <ul id="nav">
+                <li>
+                    <a href="javascript:;">
+                        <i class="iconfont left-nav-li" lay-tips="member">&#xe758;</i>
+                        <cite>Sell chart</cite>
+                        <i class="iconfont nav_right">&#xe697;</i>
+                    </a>
+                    <ul class="sub-menu">
+                        <li>
+                            <a onclick="xadmin.add_tab('Sell chart','')">
+                                <i class="iconfont">&#xe6a7;</i>
+                                <cite>Sell chart</cite>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="javascript:;">
+                        <i class="iconfont left-nav-li" lay-tips="Personal center">&#xe753;</i>
+                        <cite>Administration</cite>
+                        <i class="iconfont nav_right">&#xe697;</i>
+                    </a>
+                    <ul class="sub-menu">
+                        <li>
+                            <a onclick="xadmin.add_tab('Item administration','itemAdmin')">
+                                <i class="iconfont">&#xe6a7;</i>
+                                <cite>Item</cite>
+                            </a>
+                        </li>
+                        <li>
+                            <a onclick="xadmin.add_tab('Order administration','orderAdmin')">
+                                <i class="iconfont">&#xe6a7;</i>
+                                <cite>Order</cite>
+                            </a>
+                        </li>
+                        <li>
+                            <a onclick="xadmin.add_tab('User administration','userAdmin')">
+                                <i class="iconfont">&#xe6a7;</i>
+                                <cite>User</cite>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}

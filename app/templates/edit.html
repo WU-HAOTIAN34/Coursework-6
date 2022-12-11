@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" class="x-admin-sm">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../static/lib/X-admin/css/xadmin.css">
+    <script type="text/javascript" src="../static/lib/js/jQuery3-6-0.js"></script>
+    <script type="text/javascript" src="../static/lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../static/lib/X-admin/js/xadmin.js"></script>
+    <link rel="stylesheet" href="../static/lib/X-admin/css/font.css">
+    <script src="../static/lib/bootstrap/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="../static/lib/bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" href="../static/css/index.css">
+</head>
+<body>
+    <div class="row my-5">
+    <div class="col-2"></div>
+    <div class="col-8">
+        <form method="post" name="new">
+            {{ form.csrf_token }}
+            <label>Item name</label>
+            {{ form.item_name(class_="form-control")}}
+            <br>
+            <label>Unit price</label>
+            {{ form.price(class_="form-control") }}
+            <br>
+            <label>Image</label>
+            {{ form.image(class_="form-control") }}
+            <br>
+            <label>Description</label>
+            {{ form.description(class_="form-control") }}
+            <br>
+            <p>
+                <input type="submit" class="btn btn-dark" value="Submit">
+            </p>
+        </form>
+    </div>
+    </div>
+</body>
+</html>

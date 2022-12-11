@@ -15,12 +15,18 @@ def login():
         username = form.username.data
         password = form.password.data
         identity = form.identity.data
-        user = User.query.filter(User.username == username, User.password == password).all()
+        user = User.query.filter(User.username == username, User.password == password, User.job == identity).all()
         if not user:
             return render_template('login.html', form=form)
         else:
-            session['user'] = [user[0].username, user[0].password, user[0].phone, user[0].name, user[0].job, user[0].id]
-            return render_template('index.html', form=form)
+            if user[0].job == 0:
+                session['user'] = [user[0].username, user[0].password, user[0].phone, user[0].name, user[0].job,
+                                   user[0].id]
+                return render_template('userIndex.html', form=form)
+            elif user[0].job == 1:
+                session['user'] = [user[0].username, user[0].password, user[0].phone, user[0].name, user[0].job,
+                                   user[0].id]
+                return render_template('adminIndex.html', form=form)
     return render_template('login.html', form=form)
 
 
@@ -246,3 +252,169 @@ def deleteFavor():
     db.session.delete(collection)
     db.session.commit()
     return redirect('collection')
+
+
+@app.route('/orderAdmin', methods=['GET', 'POST'])
+def orderAdmin():
+    order = db.session.query(Order.id, Order.user_id, Order.item_id, Order.money, Order.destination, Order.number,
+                             Order.time, Item.price, Item.item_name, User.name, User.phone)\
+        .join(Item, Order.item_id == Item.id).join(User, Order.user_id == User.id).all()
+    order_list = []
+    for i in order:
+        price = i.number * 500
+        a = i.time
+        day = datetime(a.year, a.month, a.day, a.hour, a.minute, int(a.second))
+        order_list.append([i, price, day])
+    return render_template('orderAdmin.html', order=order_list)
+
+
+@app.route('/itemAdmin', methods=['GET', 'POST'])
+def itemAdmin():
+    item = Item.query.all()
+    user_id = session.get('user')[5]
+    item_list = []
+    for i in item:
+        temp = base64.b64encode(i.image)
+        temp = str(temp)
+        byte_str = copy.deepcopy(temp[2:len(temp) - 1])
+        favor = Collection.query.filter(Collection.item_id == i.id, Collection.user_id == user_id).all()
+        a = 1
+        if not favor:
+            a = 0
+        item_list.append([i, byte_str, a])
+    return render_template('itemAdmin.html', item=item_list, base64=base64)
+
+
+@app.route('/userAdmin', methods=['GET', 'POST'])
+def userAdmin():
+    user_list = User.query.all()
+    user = []
+    for i in user_list:
+        temp = ''
+        num = 0
+        length = len(i.password)
+        for j in i.password:
+            if (num >= 0 and num <= 1) or (num >= length - 3 and num <= length - 1):
+                temp = temp + j
+            else:
+                temp = temp + '*'
+            num += 1
+        user.append([i, temp])
+    return render_template('userAdmin.html', user=user)
+
+
+@app.route('/', methods=['GET', 'POST'])
+def logout():
+    session.pop('user')
+    form = LoginForm
+    return render_template('login.html', form=form)
+
+
+@app.route('/deleteOrder', methods=['GET', 'POST'])
+def deleteOrder():
+    order_id = request.form.get('id')
+    order = Order.query.filter_by(id=order_id).first()
+    db.session.delete(order)
+    db.session.commit()
+    data = {'word': 1}
+    return json.dumps(data)
+
+
+@app.route('/batchDeleteOrder', methods=['GET', 'POST'])
+def batchDeleteOrder():
+    order_id = request.form.get('id')
+    temp = str(order_id)
+    temp2 = copy.deepcopy(temp[0:len(temp) - 1])
+    a = temp2.split(' ')
+    id_list = []
+    for i in a:
+        id_list.append(int(i))
+    for i in id_list:
+        order = Order.query.filter_by(id=i).first()
+        db.session.delete(order)
+        db.session.commit()
+    data = {'word': 1}
+    return json.dumps(data)
+
+
+@app.route('/deleteItem', methods=['GET', 'POST'])
+def deleteItem():
+    item_id = request.form.get('id')
+    item = Item.query.filter_by(id=item_id).first()
+    favor = Collection.query.filter_by(item_id=item.id).all()
+    cart = Cart.query.filter_by(item_id=item.id).all()
+    order = Order.query.filter_by(item_id=item.id).all()
+    for i in favor:
+        db.session.delete(i)
+        db.session.commit()
+    for i in cart:
+        db.session.delete(i)
+        db.session.commit()
+    for i in order:
+        db.session.delete(i)
+        db.session.commit()
+    db.session.delete(item)
+    db.session.commit()
+    data = {'word': 1}
+    return json.dumps(data)
+
+
+@app.route('/batchDeleteItem', methods=['GET', 'POST'])
+def batchDeleteItem():
+    item_id = request.form.get('id')
+    temp = str(item_id)
+    temp2 = copy.deepcopy(temp[0:len(temp) - 1])
+    a = temp2.split(' ')
+    id_list = []
+    for i in a:
+        id_list.append(int(i))
+    for i in id_list:
+        item = Item.query.filter_by(id=i).first()
+        favor = Collection.query.filter_by(item_id=item.id).all()
+        cart = Cart.query.filter_by(item_id=item.id).all()
+        order = Order.query.filter_by(item_id=item.id).all()
+        for j in favor:
+            db.session.delete(j)
+            db.session.commit()
+        for j in cart:
+            db.session.delete(j)
+            db.session.commit()
+        for j in order:
+            db.session.delete(j)
+            db.session.commit()
+        db.session.delete(item)
+        db.session.commit()
+    data = {'word': 1}
+    return json.dumps(data)
+
+
+@app.route('/addItem', methods=['GET', 'POST'])
+def addItem():
+    form = AddItemForm()
+    if form.validate_on_submit():
+        name = form.item_name.data
+        price = form.price.data
+        description = form.description.data
+        image = request.files['image'].read()
+        item = Item(item_name=name, description=description, price=price, image=image)
+        db.session.add(item)
+        db.session.commit()
+        return redirect(url_for('itemAdmin'))
+    return render_template('edit.html', form=form, base64=base64)
+
+
+# @app.route('/editItem', methods=['GET', 'POST'])
+# def editItem():
+#     order_id = request.form.get('id')
+#     temp = str(order_id)
+#     temp2 = copy.deepcopy(temp[0:len(temp) - 1])
+#     a = temp2.split(' ')
+#     id_list = []
+#     for i in a:
+#         id_list.append(int(i))
+#     for i in id_list:
+#         order = Order.query.filter_by(id=i).first()
+#         db.session.delete(order)
+#         db.session.commit()
+#     data = {'word': 1}
+   # return json.dumps(data)

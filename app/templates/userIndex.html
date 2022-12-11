@@ -1,0 +1,60 @@
+{% extends "indexbase.html" %}
+{% block content %}
+    <div class="left-nav">
+        <div id="side-nav">
+            <ul id="nav">
+                <li>
+                    <a href="javascript:;">
+                        <i class="iconfont left-nav-li" lay-tips="member">&#xe6ba;</i>
+                        <cite>Mall</cite>
+                        <i class="iconfont nav_right">&#xe697;</i>
+                    </a>
+                    <ul class="sub-menu">
+                        <li>
+                            <a onclick="xadmin.add_tab('Fruit','shop')" class="refresh-now">
+                                <i class="iconfont">&#xe6a7;</i>
+                                <cite>Fruit</cite>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="javascript:;">
+                        <i class="iconfont left-nav-li" lay-tips="order">&#xe698;</i>
+                        <cite>Shopping cart</cite>
+                        <i class="iconfont nav_right">&#xe697;</i>
+                    </a>
+                    <ul class="sub-menu">
+                        <li>
+                            <a onclick="xadmin.add_tab('Shopping cart','cartItem')" class="refresh-now shop-cart">
+                                <i class="iconfont">&#xe6a7;</i>
+                                <cite>Shopping cart</cite>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="javascript:;">
+                        <i class="iconfont left-nav-li" lay-tips="Personal center">&#xe70b;</i>
+                        <cite>Personal center</cite>
+                        <i class="iconfont nav_right">&#xe697;</i>
+                    </a>
+                    <ul class="sub-menu">
+                        <li>
+                            <a onclick="xadmin.add_tab('My favor','collection')" class="refresh-now my-favor">
+                                <i class="iconfont">&#xe6a7;</i>
+                                <cite>My Favor</cite>
+                            </a>
+                        </li>
+                        <li>
+                            <a onclick="xadmin.add_tab('My order','order')" class="refresh-now my-order">
+                                <i class="iconfont">&#xe6a7;</i>
+                                <cite>My Order</cite>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}

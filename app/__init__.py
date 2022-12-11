@@ -11,3 +11,15 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
 from app import views
+
+
+import logging
+logger = logging.getLogger(__name__)
+logger.setLevel(level=logging.INFO)
+handler = logging.FileHandler("flask.log")
+handler.setLevel(logging.INFO)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+handler.setFormatter(formatter)
+console = logging.StreamHandler()
+console.setLevel(logging.INFO)
+logger.addHandler(handler)

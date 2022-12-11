@@ -26,6 +26,7 @@ def login():
             elif user[0].job == 1:
                 session['user'] = [user[0].username, user[0].password, user[0].phone, user[0].name, user[0].job,
                                    user[0].id]
+
                 return render_template('adminIndex.html', form=form)
     return render_template('login.html', form=form)
 

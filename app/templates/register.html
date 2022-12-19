@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en" class="x-admin-sm">
+<head>
+    <meta charset="UTF-8">
+    <title>Fruit Shop</title>
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+    <script type="text/javascript" src="../static/lib/X-admin/js/jquery.min.js"></script>
+    <link rel="stylesheet" href="../static/lib/X-admin/css/font.css">
+    <link rel="stylesheet" href="../static/lib/X-admin/css/login.css">
+    <link rel="stylesheet" href="../static/lib/X-admin/css/xadmin.css">
+    <script src="../static/lib/X-admin/lib/layui/layui.js" charset="utf-8"></script>
+    <script src="../static/js/index.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="../static/css/index.css">
+</head>
+<body class="login-bg">
+    <br><br><br><br><br><br><br>
+    <div class="register-box">
+        <br>
+        <div class="layui-fluid ">
+            <div class="layui-row">
+                <form class="layui-form">
+                    <div class="layui-form-item">
+                        <label for="L_email" class="layui-form-label">
+                            <span class="x-red">*</span>
+                            Username:
+                        </label>
+                        <div class="layui-input-inline">
+                            {{ form.username(class_="form-control", class="layui-input", id="username") }}
+                        </div>
+                        <div class="layui-form-mid layui-word-aux">
+                            <span class="x-red">*</span>Will be your only login name
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label for="L_username" class="layui-form-label">
+                            <span class="x-red">*</span>
+                            Password:
+                        </label>
+                        <div class="layui-input-inline">
+                            {{ form.password(class_="form-control", class="layui-input", id="password") }}
+                        </div>
+                        <div class="layui-form-mid layui-word-aux">
+                            <span class="x-red">*</span>Longer than 6 characters
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label for="L_username" class="layui-form-label">
+                            <span class="x-red">*</span>
+                            Confirm:
+                        </label>
+                        <div class="layui-input-inline">
+                            {{ form.confirm(class_="form-control", class="layui-input", id="confirm") }}
+                        </div>
+                        <div class="layui-form-mid layui-word-aux">
+                            <span class="x-red">*</span>Longer than 6 characters
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label for="L_pass" class="layui-form-label">
+                            <span class="x-red">*</span>
+                            Name:
+                        </label>
+                        <div class="layui-input-inline">
+                            {{ form.name(class_="form-control", class="layui-input", id="name") }}
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label for="L_pass" class="layui-form-label">
+                            <span class="x-red">*</span>
+                            Phone:
+                        </label>
+                        <div class="layui-input-inline">
+                            {{ form.phone(class_="form-control", class="layui-input", id="phone") }}
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label for="L_pass" class="layui-form-label">
+                            <span class="x-red">*</span>
+                            Identity:
+                        </label>
+                        <div class="layui-input-inline">
+                            {{ form.identity(class_="form-control", class="layui-input", id="identity") }}
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label for="L_repass" class="layui-form-label"></label>
+                        <a class="layui-btn" id="register-button">Register</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

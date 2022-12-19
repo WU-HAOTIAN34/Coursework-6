@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="../static/lib/js/jQuery3-6-0.js"></script>
+    <link rel="stylesheet" href="../static/lib/X-admin/css/font.css">
+    <link rel="stylesheet" href="../static/lib/X-admin/css/font.css">
+    <script src="../static/lib/bootstrap/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="../static/lib/bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" href="../static/lib/layui/css/layui.css">
+    <link rel="stylesheet" href="../static/css/index.css">
+    <link rel="stylesheet" href="../static/lib/X-admin/css/font.css">
+    <link rel="stylesheet" href="../static/lib/X-admin/css/xadmin.css">
+    <script src="../static/lib/X-admin/lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../static/lib/X-admin/js/xadmin.js"></script>
+    <link rel="stylesheet" href="../static/css/index.css">
+    <script type="text/javascript" src="../static/js/index.js"></script>
+</head>
+<body>
+    <br>
+    <div class="center">
+        <div class="a">
+            <i class="iconfont nav_right layui-font-30 icon-user">&#xe726;</i>
+        </div>
+        <form method="post" name="editInformation">
+            {{ form.csrf_token }}
+            <br>
+            <div class="layui-font-18">Username: {{ user[0] }}</div>
+            <br>
+            Password:
+            {{ form.password(class_="form-control", value= user[1], id="demo") }}
+            <input type="text" id="password-test" placeholder="{{user[1]}}">
+            {% for error in form.password.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+            {% endfor %}
+            <br>
+            Name:
+            {{ form.name(class_="form-control", value= user[3]) }}
+            <br>
+            Phone number:
+            {{ form.phone(class_="form-control", value= user[2]) }}
+            <br>
+            <div class="layui-font-18">
+                Identity:
+                {% if user[4] %}
+                Administrator
+                {% else %}
+                User
+                {% endif %}
+            </div>
+            <br>
+            <input value="Submit" class="btn btn-dark" type="submit">
+        </form>
+    </div>
+<script src="../static/js/index.js"></script>
+</body>
+</html>

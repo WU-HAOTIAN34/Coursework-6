@@ -10,30 +10,69 @@
     <script src="../static/lib/bootstrap/bootstrap.min.js"></script>
     <link rel="stylesheet" href="../static/lib/bootstrap/bootstrap.min.css">
     <link rel="stylesheet" href="../static/css/index.css">
+    <script src="../static/js/index.js"></script>
+    <link rel="stylesheet" href="../static/lib/X-admin/lib/layui/css/layui.css">
+    <script src="../static/lib/X-admin/lib/layui/lay/modules/form.js"></script>
 </head>
 <body>
     <div class="row my-5">
-    <div class="col-2"></div>
-    <div class="col-8">
-        <form method="post" name="new">
-            {{ form.csrf_token }}
-            <label>Item name</label>
-            {{ form.item_name(class_="form-control")}}
-            <br>
-            <label>Unit price</label>
-            {{ form.price(class_="form-control") }}
-            <br>
-            <label>Image</label>
-            {{ form.image(class_="form-control") }}
-            <br>
-            <label>Description</label>
-            {{ form.description(class_="form-control") }}
-            <br>
-            <p>
-                <input type="submit" class="btn btn-dark" value="Submit">
-            </p>
-        </form>
-    </div>
+        <div class="col-2"></div>
+        <div class="col-8">
+            {% if ds==1 %}
+                <form method="post" name="addItem" enctype="multipart/form-data">
+                    {{ form.csrf_token }}
+                    <label>Item name<strong class="x-red">*</strong></label>
+                    {{ form.item_name(class_="form-control", id="name")}}
+                    <br>
+                    <label>Unit price<strong class="x-red">*</strong></label>
+                    {{ form.price(class_="form-control", id="price") }}
+                    {% for error in form.price.errors %}
+                        <div class="alert alert-danger" role="alert">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+                    <br>
+                    <label>Image<strong class="x-red">*</strong></label>
+                    {{ form.image(class_="form-control", id="image") }}
+                    <br>
+                    <label>Description<strong class="x-red">*</strong></label>
+                    {{ form.description(class_="form-control", id="description") }}
+                    <br>
+                    <p>
+                        <input value="Add" id="add_a" class="btn btn-dark" type="submit">
+                    </p>
+                </form>
+            {% elif ds==2 %}
+                <form method="post" name="editItem" enctype="multipart/form-data">
+                    {{ form.csrf_token }}
+                    <label>Item name<strong class="x-red">*</strong></label>
+                    {{ form.item_name(class_="form-control", id="name", value=item[0].item_name)}}
+                    <br>
+                    <label>Unit price<strong class="x-red">*</strong></label>
+                    {{ form.price(class_="form-control", id="price", value=item[0].price) }}
+                    {% for error in form.price.errors %}
+                        <div class="alert alert-danger" role="alert">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+                    <br>
+                    <label>Image</label>
+                    {{ form.image(class_="form-control", id="image") }}
+                    <br>
+                    <div>
+                        <img class="edit-image" src="data:;base64,{{ item[1] }}" >
+                    </div>
+                    <br>
+                    <label>Description<strong class="x-red">*</strong></label>
+                    {{ form.description(class_="form-control", id="demo") }}
+                    <input type="text" id="description-text" placeholder="{{item[0].description}}">
+                    <br>
+                    <p>
+                        <input value="Edit" id="add_a" class="btn btn-dark" type="submit">
+                    </p>
+                </form>
+            {% endif %}
+        </div>
     </div>
 </body>
 </html>

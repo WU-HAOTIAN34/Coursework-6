@@ -20,8 +20,8 @@ $(function () {
             type: 'POST',
             data: {},
             success: function (data) {
-                var user = '' + data[3];
-                document.getElementById('user').innerText = 'Welcome: ' + user;
+                var user = '' + data[0];
+                document.getElementById('user').innerText = 'Welcome: User ' + user;
             }
         })
     }
@@ -51,28 +51,37 @@ $(function () {
         } else if (!(a % 1 == 0) && (b % 1 == 0)) {
             alert('Please enter an integer!')
         } else {
-            $.ajax({
-                url: '/purchase',
-                type: 'POST',
-                data: {
-                    item_id: item_id,
-                    province: province,
-                    city: city,
-                    number: number
-                },
-                dataType: "json",
-                success: function (data) {
-                    var judge = parseInt(data.word)
-                    if (judge == 1) {
-                        alert('You have successfully purchased!')
-                    } else {
-                        alert('Purchase failed!')
-                    }
-                },
-                error: function () {
-                    alert("Error!");
+            layer.confirm('Are you sure to purchase？', {
+                title: "Information",
+                btn: ['Pay', 'Cancel'],
+                btn1: function (index) {
+                    $.ajax({
+                        url: '/purchase',
+                        type: 'POST',
+                        data: {
+                            item_id: item_id,
+                            province: province,
+                            city: city,
+                            number: number
+                        },
+                        dataType: "json",
+                        success: function (data) {
+                            var judge = parseInt(data.word)
+                            if (judge == 1) {
+                            } else {
+                                alert('Purchase failed!')
+                            }
+                        },
+                        error: function () {
+                            alert("Error!");
+                        }
+                    })
+                    layer.msg('Payment succeeded, and you can see the order in MY Order!', {
+                        icon: 1,
+                        time: 1000
+                    });
                 }
-            })
+            });
         }
     })
 
@@ -91,28 +100,37 @@ $(function () {
         } else if (!(a % 1 == 0) && (b % 1 == 0)) {
             alert('Please enter an integer!')
         } else {
-            $.ajax({
-                url: '/collect',
-                type: 'POST',
-                data: {
-                    item_id: item_id,
-                    province: province,
-                    city: city,
-                    number: number
-                },
-                dataType: "json",
-                success: function (data) {
-                    var judge = parseInt(data.word)
-                    if (judge == 1) {
-                        alert('Has been added to the shopping cart!')
-                    } else {
-                        alert('Purchase failed!')
-                    }
-                },
-                error: function () {
-                    alert("Error!");
+            layer.confirm('Are you sure to add to cart？', {
+                title: "Information",
+                btn: ['Yes', 'Cancel'],
+                btn1: function (index) {
+                    $.ajax({
+                        url: '/collect',
+                        type: 'POST',
+                        data: {
+                            item_id: item_id,
+                            province: province,
+                            city: city,
+                            number: number
+                        },
+                        dataType: "json",
+                        success: function (data) {
+                            var judge = parseInt(data.word)
+                            if (judge == 1) {
+                            } else {
+                                alert('Purchase failed!')
+                            }
+                        },
+                        error: function () {
+                            alert("Error!");
+                        }
+                    })
+                    layer.msg('Add ro cart successfully, and you can see it in your shopping cart!', {
+                        icon: 1,
+                        time: 1000
+                    });
                 }
-            })
+            });
         }
     })
 
@@ -333,6 +351,152 @@ $(function () {
             }
         });
     }
+
+    if(document.getElementById('description-text')!=null){
+        document.getElementById('demo').value=document.getElementById('description-text').placeholder;
+        var obj = document.getElementById('description-text');
+        obj.remove();
+    }
+
+    if(document.getElementById('password-test')!=null){
+        document.getElementById('demo').value=document.getElementById('password-test').placeholder;
+        var obj = document.getElementById('password-test');
+        obj.remove();
+    }
+
+    if(document.getElementById('sale-chart')!=null){
+        $.ajax({
+            url: '/getSale',
+            type: 'POST',
+            data: {},
+            dataType: "json",
+            success: function (data) {
+                var name = data.name;
+                var money_ = data.money;
+                var money = new Array(money_.length)
+                for(var i=0; i <money_.length;i++){
+                    money[i] = parseInt(money_[i])
+                }
+                var dom = document.getElementById('container');
+                var myChart = echarts.init(dom, null, {
+                    renderer: 'canvas',
+                    useDirtyRect: false
+                });
+                var app = {};
+                var option;
+                option = {
+                    title: {
+                        text: 'Total Sales for Each Item'
+                    },
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'shadow'
+                        }
+                    },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '3%',
+                        containLabel: true
+                    },
+                    xAxis: {
+                        type: 'value',
+                        boundaryGap: [0, 0.01]
+                    },
+                    yAxis: {
+                        type: 'category',
+                        data: name
+                    },
+                    series: [{
+                        name: '2011',
+                        type: 'bar',
+                        data: money
+                    }]
+                };
+                if (option && typeof option === 'object') {
+                    myChart.setOption(option);
+                }
+                window.addEventListener('resize', myChart.resize);
+            }
+        })
+    }
+
+    $('a#register-button').on("click", function () {
+        var username = $('#username').val();
+        var password = $('#password').val();
+        var confirm = $('#confirm').val();
+        var name = $('#name').val();
+        var phone = $('#phone').val();
+        var identity = $('#identity').val();
+        if (username == '' || password == '' || confirm == '' || name =='' || phone == '') {
+            alert('Please enter all the required items!');
+        } else if (password.length <= 6) {
+            alert('The password should be longer than 6 characters!');
+        } else if (password != confirm) {
+            alert('The passwords entered twice are different!');
+        } else {
+            $.ajax({
+                url: '/registerVali',
+                type: 'POST',
+                data: {
+                    username: username,
+                    password: password,
+                    name: name,
+                    phone: phone,
+                    identity: identity
+                },
+                dataType: "json",
+                success: function (data) {
+                    var a = parseInt(data.word);
+                    if (a == 0) {
+                        alert('The username already exists!');
+                    } else {
+                        alert('Register successfully!');
+                        window.location = '/';
+                    }
+                },
+                error: function () {
+                    alert("Error!");
+                }
+            })
+        }
+    })
+
+    $('input#login-button').on("click", function () {
+        var username = $('#user').val();
+        var password = $('#password').val();
+        var identity = $('#identity').val();
+        if (username == '' || password == '') {
+            alert('Please enter all the required items!');
+        } else {
+            $.ajax({
+                url: '/loginVali',
+                type: 'POST',
+                data: {
+                    username: username,
+                    password: password,
+                    identity: identity
+                },
+                dataType: "json",
+                success: function (data) {
+                    var a = parseInt(data.word);
+                    if (a == 0) {
+                        alert('Username or password error!');
+                    } else if(a == 1){
+                        alert('Login successfully!');
+                        window.location = '/user';
+                    }else if(a == 2){
+                        alert('Login successfully!');
+                        window.location = '/admin';
+                    }
+                },
+                error: function () {
+                    alert("Error!");
+                }
+            })
+        }
+    })
 
 
 })

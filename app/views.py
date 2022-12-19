@@ -1,8 +1,8 @@
 import copy
-from flask import request, flash, render_template, url_for, redirect, session, json
+from flask import request, flash, render_template, url_for, redirect, session, json, current_app
 from app import app, db
 import datetime
-from .forms import LoginForm, AddItemForm, PurchaseForm
+from .forms import LoginForm, AddItemForm, PurchaseForm, EditItemForm, EditInformationForm, RegisterForm, SearchForm
 from .models import User, Item, Order, Cart, Collection
 from datetime import datetime
 import base64
@@ -11,29 +11,78 @@ import base64
 @app.route('/', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
-    if form.validate_on_submit():
-        username = form.username.data
-        password = form.password.data
-        identity = form.identity.data
-        user = User.query.filter(User.username == username, User.password == password, User.job == identity).all()
-        if not user:
-            return render_template('login.html', form=form)
-        else:
-            if user[0].job == 0:
-                session['user'] = [user[0].username, user[0].password, user[0].phone, user[0].name, user[0].job,
-                                   user[0].id]
-                return render_template('userIndex.html', form=form)
-            elif user[0].job == 1:
-                session['user'] = [user[0].username, user[0].password, user[0].phone, user[0].name, user[0].job,
-                                   user[0].id]
-
-                return render_template('adminIndex.html', form=form)
     return render_template('login.html', form=form)
+
+
+@app.route('/admin', methods=['GET', 'POST'])
+def admin():
+    return render_template('adminIndex.html')
+
+
+@app.route('/user', methods=['GET', 'POST'])
+def user():
+    return render_template('userIndex.html')
+
+
+
+
+@app.route('/loginVali', methods=['GET', 'POST'])
+def loginVali():
+    username = request.form.get('username')
+    password = request.form.get('password')
+    identity = request.form.get('identity')
+    temp = int(identity)
+    if temp == 0:
+        user = User.query.filter(User.username == username, User.password == password, User.job == 0).first()
+    else:
+        user = User.query.filter(User.username == username, User.password == password, User.job == 1).first()
+    print(user)
+    if user:
+        session.pop('user')
+        session['user'] = [user.username, user.password, user.phone, user.name, user.job, user.id]
+        if user.job:
+            current_app.logger.info("Admin logged in")
+            data = {'word': 2}
+            return json.dumps(data)
+        else:
+            current_app.logger.info("Admin logged in")
+            data = {'word': 1}
+            return json.dumps(data)
+    else:
+        current_app.logger.info("Admin logged in")
+        data = {'word': 0}
+        return json.dumps(data)
 
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    return redirect(url_for('add'))
+    form = RegisterForm()
+    return render_template('register.html', form=form)
+
+
+@app.route('/registerVali', methods=['GET', 'POST'])
+def registerVali():
+    username = request.form.get('username')
+    password = request.form.get('password')
+    name = request.form.get('name')
+    phone = request.form.get('phone')
+    identity = request.form.get('identity')
+    print(identity)
+    user = User.query.filter(User.username == username).all()
+    if not user:
+        temp = int(identity)
+        if temp == 0:
+            user_ = User(username=username, password=password, job=0, name=name, phone=phone)
+        else:
+            user_ = User(username=username, password=password, job=1, name=name, phone=phone)
+        db.session.add(user_)
+        db.session.commit()
+        data = {'word': 1}
+        return json.dumps(data)
+    else:
+        data = {'word': 0}
+        return json.dumps(data)
+
 
 
 @app.route('/add', methods=['GET', 'POST'])
@@ -61,6 +110,7 @@ def add():
 
 @app.route('/shop', methods=['GET', 'POST'])
 def shop():
+    form = SearchForm()
     item = Item.query.all()
     user_id = session.get('user')[5]
     item_list = []
@@ -73,7 +123,27 @@ def shop():
         if not favor:
             a = 0
         item_list.append([i, byte_str, a])
-    return render_template('item.html', item=item_list, base64=base64, page=1)
+    if form.validate_on_submit():
+        name = form.search.data
+        if name == '':
+            item = Item.query.all()
+        else:
+            temp = "%" + name + "%"
+            item = Item.query.filter(Item.item_name.like(temp)).all()
+        form = SearchForm()
+        user_id = session.get('user')[5]
+        item_list = []
+        for i in item:
+            temp = base64.b64encode(i.image)
+            temp = str(temp)
+            byte_str = copy.deepcopy(temp[2:len(temp) - 1])
+            favor = Collection.query.filter(Collection.item_id == i.id, Collection.user_id == user_id).all()
+            a = 1
+            if not favor:
+                a = 0
+            item_list.append([i, byte_str, a])
+        return render_template('item.html', item=item_list, base64=base64, page=1, form=form)
+    return render_template('item.html', item=item_list, base64=base64, page=1, form=form)
 
 
 @app.route('/information', methods=['GET', 'POST'])
@@ -401,21 +471,69 @@ def addItem():
         db.session.add(item)
         db.session.commit()
         return redirect(url_for('itemAdmin'))
-    return render_template('edit.html', form=form, base64=base64)
+    return render_template('edit.html', form=form, base64=base64, ds=1)
 
 
-# @app.route('/editItem', methods=['GET', 'POST'])
-# def editItem():
-#     order_id = request.form.get('id')
-#     temp = str(order_id)
-#     temp2 = copy.deepcopy(temp[0:len(temp) - 1])
-#     a = temp2.split(' ')
-#     id_list = []
-#     for i in a:
-#         id_list.append(int(i))
-#     for i in id_list:
-#         order = Order.query.filter_by(id=i).first()
-#         db.session.delete(order)
-#         db.session.commit()
-#     data = {'word': 1}
-   # return json.dumps(data)
+@app.route('/editItem', methods=['GET', 'POST'])
+def editItem():
+    form = EditItemForm()
+    item_id = request.args.get('id')
+    item = Item.query.filter_by(id=item_id).first()
+    temp = base64.b64encode(item.image)
+    temp = str(temp)
+    byte_str = copy.deepcopy(temp[2:len(temp) - 1])
+    if form.validate_on_submit():
+        name = form.item_name.data
+        price = form.price.data
+        description = form.description.data
+        image = request.files['image'].read()
+        item.item_name = name
+        item.description = description
+        item.price = price
+        temp = str(base64.b64encode(image))
+        if temp != "b''":
+            item.image = image
+        db.session.commit()
+        return redirect(url_for('itemAdmin'))
+    return render_template('edit.html', form=form, base64=base64, ds=2, item=[item, byte_str])
+
+
+@app.route('/editInformation', methods=['GET', 'POST'])
+def editInformation():
+    form = EditInformationForm()
+    user_ = session.get('user')
+    if form.validate_on_submit():
+        user = User.query.filter_by(id=user_[5]).first()
+        name = form.name.data
+        phone = form.phone.data
+        password = form.password.data
+        user.password = password
+        user.name = name
+        user.phone = phone
+        db.session.commit()
+        user1 = User.query.filter_by(id=user_[5]).first()
+        session.pop('user')
+        session['user'] = [user1.username, user1.password, user1.phone, user1.name, user1.job, user1.id]
+        return redirect(url_for('information'))
+    return render_template('editInformation.html', user=user_, form=form)
+
+
+@app.route('/sale', methods=['GET', 'POST'])
+def sale():
+    return render_template('chart.html')
+
+
+@app.route('/getSale', methods=['GET', 'POST'])
+def getSale():
+    item_list = Item.query.all()
+    sale_list = []
+    money = []
+    for i in item_list:
+        num = 0
+        order_list = Order.query.filter_by(item_id=i.id).all()
+        for j in order_list:
+            num += j.money
+        sale_list.append(i.item_name)
+        money.append(num)
+    data = {'name': sale_list, 'money': money}
+    return json.dumps(data)

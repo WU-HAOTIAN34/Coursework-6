@@ -72,3 +72,27 @@ img.item-image{
 .text-right{
     text-align: right;
 }
+.edit-image{
+    width: 40%;
+}
+.center{
+    width: 90%;
+    margin: auto;
+}
+.icon-user{
+    font-size: 80px;
+}
+.a{
+    width: 30%;
+    margin: auto;
+}
+.welcome-text{
+    font-size: 60px;
+    width: 500px;
+    margin-left: 5%;
+}
+.register-box{
+    width: 400px;
+    margin: auto;
+    background-color: wheat;
+}

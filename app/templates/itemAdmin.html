@@ -11,7 +11,7 @@
     <script src="../static/lib/X-admin/lib/layui/layui.js" charset="utf-8"></script>
     <script type="text/javascript" src="../static/lib/X-admin/js/xadmin.js"></script>
     <script type="text/javascript" src="../static/lib/js/jQuery3-6-0.js"></script>
-    <script type="text/javascript" src="../static/js/index.js"></script>
+
 </head>
 <body>
     <div class="x-nav">
@@ -26,19 +26,11 @@
             <div class="layui-col-md12">
                 <div class="layui-card">
                     <div class="layui-card-body ">
-                        <form class="layui-form layui-col-space5">
-                            <div class="layui-input-inline layui-show-xs-block">
-                                <input type="text" name="username" placeholder="Please enter order ID" autocomplete="off" class="layui-input"></div>
-                            <div class="layui-input-inline layui-show-xs-block">
-                                <button class="layui-btn" lay-submit="" lay-filter="sreach">
-                                    <i class="layui-icon">&#xe615;</i>
-                                </button>
-                            </div>
-                        </form>
+
                     </div>
 
                     <div class="layui-card-header">
-                        <button class="layui-btn layui-btn-danger" onclick="delAll()">
+                        <button class="layui-btn layui-btn-danger" onclick="delAll_item()">
                             <i class="iconfont">&#xe69d;</i>
                             Batch delete
                         </button>
@@ -72,10 +64,10 @@
                                     <td>{{ i[0].description }}</td>
                                     <td><img class="item-image" src="data:;base64,{{ i[1] }}" ></td>
                                     <td class="td-manage">
-                                        <a title="delete" class="layui-btn layui-btn-danger" onclick="member_del(this, {{ i[0].id }})" href="javascript:;" >
+                                        <a title="delete" class="layui-btn layui-btn-danger" onclick="member_del_item(this, {{ i[0].id }})" href="javascript:;" >
                                             <i class="layui-icon layui-font-red">&#xe640;</i>
                                         </a>
-                                        <a title="edit" href="javascript:;">
+                                        <a title="edit"  href="{{ url_for('editItem', id=i[0].id) }}">
                                             <i class="layui-icon layui-btn layui-btn-norma">&#xe63c;</i>
                                         </a>
                                     </td>
@@ -88,5 +80,6 @@
             </div>
         </div>
     </div>
+<script type="text/javascript" src="../static/js/index.js"></script>
 </body>
 </html>

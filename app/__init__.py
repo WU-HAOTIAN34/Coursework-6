@@ -10,8 +10,6 @@ db = SQLAlchemy(app)
 # migrate the database
 migrate = Migrate(app, db)
 
-from app import views
-
 
 import logging
 logger = logging.getLogger(__name__)
@@ -23,3 +21,6 @@ handler.setFormatter(formatter)
 console = logging.StreamHandler()
 console.setLevel(logging.INFO)
 logger.addHandler(handler)
+# logger.addHandler(console)
+
+from app import views

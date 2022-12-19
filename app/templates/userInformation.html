@@ -3,11 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="stylesheet" href="../static/lib/X-admin/css/font.css">
+    <script src="../static/lib/bootstrap/bootstrap.min.js"></script>
+    <script src="../static/lib/js/xcity.js"></script>
+    <link rel="stylesheet" href="../static/lib/bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" href="../static/lib/layui/css/layui.css">
+    <link rel="stylesheet" href="../static/css/index.css">
+    <script src="../static/js/index.js"></script>
 </head>
 <body>
- <div>{{ user[0] }}</div>
-<div>{{ user[1] }}</div>
-<div>{{ user[2] }}</div>
-<div>{{ user[3] }}</div>
+    <br>
+    <div class="center">
+        <div class="a">
+            <i class="iconfont nav_right layui-font-30 icon-user">&#xe726;</i>
+        </div>
+        <br>
+        <div class="layui-font-18">Username: {{ user[0] }}</div>
+        <br>
+        <div class="layui-font-18">
+            Password:
+            {% for i in user[1] %}
+            *
+            {% endfor %}
+        </div>
+        <br>
+        <div class="layui-font-18">Name: {{ user[3] }}</div>
+        <br>
+        <div class="layui-font-18">Phone number: {{ user[2] }}</div>
+        <br>
+        <div class="layui-font-18">
+            Identity:
+            {% if user[4] %}
+            Administrator
+            {% else %}
+            User
+            {% endif %}
+        </div>
+        <br>
+        <a title="edit" class="btn btn-dark" href="{{ url_for('editInformation') }}">Change information</a>
+    </div>
 </body>
 </html>

@@ -5,9 +5,11 @@ import datetime
 from .forms import LoginForm, AddItemForm, PurchaseForm, EditItemForm, EditInformationForm, RegisterForm, SearchForm
 from .models import User, Item, Order, Cart, Collection
 from datetime import datetime
+from werkzeug.security import generate_password_hash, check_password_hash
 import base64
 
 
+# used to enter destination page
 @app.route('/', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
@@ -24,8 +26,7 @@ def user():
     return render_template('userIndex.html')
 
 
-
-
+# validate if the username and password is correct
 @app.route('/loginVali', methods=['GET', 'POST'])
 def loginVali():
     username = request.form.get('username')
@@ -37,31 +38,36 @@ def loginVali():
     else:
         user = User.query.filter(User.username == username, User.password == password, User.job == 1).first()
     print(user)
+    # if is administrator
     if user:
         session.pop('user')
         session['user'] = [user.username, user.password, user.phone, user.name, user.job, user.id]
         if user.job:
-            current_app.logger.info("Admin logged in")
+            current_app.logger.info('administrator: ' + user.username + " login")
             data = {'word': 2}
             return json.dumps(data)
         else:
-            current_app.logger.info("Admin logged in")
+            # if is user
+            current_app.logger.info('user: ' + user.username + " login")
             data = {'word': 1}
             return json.dumps(data)
     else:
-        current_app.logger.info("Admin logged in")
+        current_app.logger.info("login failed")
         data = {'word': 0}
         return json.dumps(data)
 
 
+# turn to register page
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegisterForm()
     return render_template('register.html', form=form)
 
 
+# achieve register
 @app.route('/registerVali', methods=['GET', 'POST'])
 def registerVali():
+    # obtain data
     username = request.form.get('username')
     password = request.form.get('password')
     name = request.form.get('name')
@@ -75,39 +81,24 @@ def registerVali():
             user_ = User(username=username, password=password, job=0, name=name, phone=phone)
         else:
             user_ = User(username=username, password=password, job=1, name=name, phone=phone)
-        db.session.add(user_)
-        db.session.commit()
+        # submit to database
+        try:
+            db.session.add(user_)
+            db.session.commit()
+        except Exception as error:
+            db.session.rollback()
+            current_app.logger.error("add invalid data, database rollback when register")
+            raise error
         data = {'word': 1}
+        current_app.logger.info(user_.username + "register successfully")
         return json.dumps(data)
     else:
         data = {'word': 0}
+        current_app.logger.info("register failed because username existing")
         return json.dumps(data)
 
 
-
-@app.route('/add', methods=['GET', 'POST'])
-def add():
-    form = AddItemForm()
-    item = Item.query.all()
-    item_list = []
-    for i in item:
-        temp = base64.b64encode(i.image)
-        temp = str(temp)
-        byte_str = copy.deepcopy(temp[2:len(temp) - 1])
-        item_list.append([i, byte_str])
-    if form.validate_on_submit():
-        file = request.files['image'].read()
-        name = form.item_name.data
-        description = form.description.data
-        price = form.price.data
-        item = Item(item_name=name, description=description, price=price, image=file)
-        db.session.add(item)
-        db.session.commit()
-        flash('ok')
-        return redirect(url_for('login'))
-    return render_template('home.html', form=form, ds=item_list, base64=base64)
-
-
+# used to present all  fruits
 @app.route('/shop', methods=['GET', 'POST'])
 def shop():
     form = SearchForm()
@@ -123,6 +114,7 @@ def shop():
         if not favor:
             a = 0
         item_list.append([i, byte_str, a])
+    # if user search a certain fruit
     if form.validate_on_submit():
         name = form.search.data
         if name == '':
@@ -142,22 +134,28 @@ def shop():
             if not favor:
                 a = 0
             item_list.append([i, byte_str, a])
+        current_app.logger.info("user: " + session.get('user')[0] + " search " + name)
         return render_template('item.html', item=item_list, base64=base64, page=1, form=form)
+    current_app.logger.info("user: " + session.get('user')[0] + " enter shop page")
     return render_template('item.html', item=item_list, base64=base64, page=1, form=form)
 
 
+# obtain user information
 @app.route('/information', methods=['GET', 'POST'])
 def information():
     user = session.get("user")
+    current_app.logger.info("user: " + session.get('user')[0] + " enter information page")
     return render_template('userInformation.html', user=user)
 
 
+# ajax to obtain user information
 @app.route('/getSession', methods=['GET', 'POST'])
 def getSession():
     user = session.get('user')
     return user
 
 
+# enter purchase page
 @app.route('/itemDetail', methods=['GET'])
 def itemDetail():
     form = PurchaseForm()
@@ -166,6 +164,7 @@ def itemDetail():
     temp = base64.b64encode(item.image)
     temp = str(temp)
     byte_str = copy.deepcopy(temp[2:len(temp) - 1])
+    current_app.logger.info("user: " + session.get('user')[0] + " enter purchasing page")
     return render_template('itemDetail.html', item=[item, byte_str], form=form)
 
 
@@ -176,6 +175,7 @@ def test():
     return 1
 
 
+# user make an order
 @app.route('/purchase', methods=['GET', 'POST'])
 def purchase():
     user_id = session.get('user')[5]
@@ -189,12 +189,21 @@ def purchase():
     price = item.price
     money = float(price) * number
     order = Order(user_id=user_id, item_id=item_id, time=curr_time, number=number, destination=destination, money=money)
-    db.session.add(order)
-    db.session.commit()
+    try:
+        db.session.add(order)
+        db.session.commit()
+    except Exception as error:
+        db.session.rollback()
+        current_app.logger.error("add invalid data, database rollback when " + session.get('user')[0] + " purchase "
+                                 + str(number) + " /500g " + str(item_id))
+        data = {'word': 0}
+        return json.dumps(data)
     data = {'word': 1}
+    current_app.logger.info("user: " + session.get('user')[0] + " purchase " + str(number) + " /500g " + str(item_id))
     return json.dumps(data)
 
 
+# used to collect a favor fruit
 @app.route('/collect', methods=['GET', 'POST'])
 def collect():
     user_id = session.get('user')[5]
@@ -207,12 +216,21 @@ def collect():
     city = request.form.get('city')
     destination = '' + province + city
     cart = Cart(user_id=user_id, item_id=item_id, number=number, money=money, destination=destination)
-    db.session.add(cart)
-    db.session.commit()
+    try:
+        db.session.add(cart)
+        db.session.commit()
+    except Exception as error:
+        db.session.rollback()
+        current_app.logger.error("add invalid data, database rollback when " + session.get('user')[0] + " add "
+                                 + str(number) + " /500g " + str(item_id) + " to cart ")
+        data = {'word': 0}
+        return json.dumps(data)
     data = {'word': 1}
+    current_app.logger.info("user: " + session.get('user')[0] + " add " + str(number) + " /500g " + str(item_id) + " to cart ")
     return json.dumps(data)
 
 
+# show users; orders
 @app.route('/order', methods=['GET', 'POST'])
 def order():
     user_id = session.get('user')[5]
@@ -227,9 +245,11 @@ def order():
         a = i.time
         day = datetime(a.year, a.month, a.day, a.hour, a.minute, int(a.second))
         order_list.append([i, byte_str, i.number * 500, day])
+    current_app.logger.info("user: " + session.get('user')[0] + " enter order page")
     return render_template('order.html', order=order_list, base64=base64)
 
 
+# show users' collection
 @app.route('/collection', methods=['GET', 'POST'])
 def collection():
     user_id = session.get('user')[5]
@@ -242,9 +262,11 @@ def collection():
         temp = str(temp)
         byte_str = copy.deepcopy(temp[2:len(temp) - 1])
         collection_list.append([i, byte_str, 1])
+    current_app.logger.info("user: " + session.get('user')[0] + " enter collection page")
     return render_template('item.html', item=collection_list, base64=base64, page=2)
 
 
+# show users' shopping cart
 @app.route('/cartItem', methods=['GET', 'POST'])
 def cartItem():
     user_id = session.get('user')[5]
@@ -258,27 +280,45 @@ def cartItem():
         temp = str(temp)
         byte_str = copy.deepcopy(temp[2:len(temp) - 1])
         cart_list.append([i, byte_str, i.number * 500])
+    current_app.logger.info("user: " + session.get('user')[0] + " enter shopping cart page ")
     return render_template('shoppingCart.html', cart=cart_list, base64=base64)
 
 
+# used to cancel an order
 @app.route('/cancelOrder', methods=['GET', 'POST'])
 def cancelOrder():
     order_id = request.args.get('id')
     order = Order.query.filter_by(id=order_id).first()
-    db.session.delete(order)
-    db.session.commit()
+    try:
+        db.session.delete(order)
+        db.session.commit()
+    except Exception as error:
+        db.session.rollback()
+        current_app.logger.error("user: " + session.get('user')[0] + " delete order " + str(order_id)
+                                 + " failed and database rollback ")
+        return redirect('order')
+    current_app.logger.info("user: " + session.get('user')[0] + " cancel a order")
     return redirect('order')
 
 
+# used to cancel an item in shopping cart
 @app.route('/cancelCart', methods=['GET', 'POST'])
 def cancelCart():
     cart_id = request.args.get('id')
     cart = Cart.query.filter_by(id=cart_id).first()
-    db.session.delete(cart)
-    db.session.commit()
+    try:
+        db.session.delete(cart)
+        db.session.commit()
+    except Exception as error:
+        db.session.rollback()
+        current_app.logger.error("user: " + session.get('user')[0] + " delete item " + str(cart_id)
+                                 + " from cart failed and database rollback ")
+        return redirect('cartItem')
+    current_app.logger.info("user: " + session.get('user')[0] + " cancel a item from cart")
     return redirect('cartItem')
 
 
+# purchase a certain item in shopping cart
 @app.route('/purchaseCart', methods=['GET', 'POST'])
 def purchaseCart():
     cart_id = request.args.get('id')
@@ -293,6 +333,7 @@ def purchaseCart():
     return redirect('cartItem')
 
 
+# collect a favor fruit
 @app.route('/makeFavor', methods=['GET', 'POST'])
 def makeFavor():
     user_id = session.get('user')[5]
@@ -304,6 +345,7 @@ def makeFavor():
     return json.dumps(data)
 
 
+# cancel a favor
 @app.route('/cancelFavor', methods=['GET', 'POST'])
 def cancelFavor():
     user_id = session.get('user')[5]
@@ -316,6 +358,7 @@ def cancelFavor():
     return json.dumps(data)
 
 
+# cancel a favor
 @app.route('/deleteFavor', methods=['GET', 'POST'])
 def deleteFavor():
     favor_id = request.args.get('id')

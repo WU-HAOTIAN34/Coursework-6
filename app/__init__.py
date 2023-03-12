@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+import logging
 
 
 app = Flask(__name__)
@@ -10,8 +11,6 @@ db = SQLAlchemy(app)
 # migrate the database
 migrate = Migrate(app, db)
 
-
-import logging
 logger = logging.getLogger(__name__)
 logger.setLevel(level=logging.INFO)
 handler = logging.FileHandler("flask.log")
@@ -21,6 +20,5 @@ handler.setFormatter(formatter)
 console = logging.StreamHandler()
 console.setLevel(logging.INFO)
 logger.addHandler(handler)
-# logger.addHandler(console)
 
 from app import views

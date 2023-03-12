@@ -431,6 +431,8 @@ $(function () {
         var identity = $('#identity').val();
         if (username == '' || password == '' || confirm == '' || name =='' || phone == '') {
             alert('Please enter all the required items!');
+        } else if (username.length>50 || name.length>50) {
+            alert('Username and name should be less than 50 characters!');
         } else if (password.length <= 6) {
             alert('The password should be longer than 6 characters!');
         } else if (password != confirm) {

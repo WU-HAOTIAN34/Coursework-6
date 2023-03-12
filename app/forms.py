@@ -35,7 +35,7 @@ class PurchaseForm(FlaskForm):
 
 class EditItemForm(FlaskForm):
     item_name = StringField('item_name', validators=[DataRequired(message='Item name cannot br empty!'), Length(max=50)])
-    price = FloatField('price', validators=[DataRequired(), NumberRange(min=0, max=None, message="Price should be larger than 0!")])
+    price = FloatField('price', validators=[DataRequired(), NumberRange(min=0, max=50, message="Price should be larger than 0!")])
     description = TextAreaField('release_day', validators=[DataRequired(), Length(max=3000)])
     image = FileField('image')
     submit = SubmitField('Sort')

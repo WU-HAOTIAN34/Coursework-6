@@ -7,7 +7,7 @@ from .models import User, Item, Order, Cart, Collection
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 import base64
-
+import json
 
 # used to enter destination page
 @app.route('/', methods=['GET', 'POST'])
@@ -40,7 +40,7 @@ def loginVali():
     print(user)
     # if is administrator
     if user:
-        session.pop('user')
+        #session.pop('user')
         session['user'] = [user.username, user.password, user.phone, user.name, user.job, user.id]
         if user.job:
             current_app.logger.info('administrator: ' + user.username + " login")

@@ -5126,3 +5126,18 @@
 2022-12-20 07:07:56,007 - app - INFO - user: 2020111111 login
 2022-12-20 07:08:00,808 - app - INFO - user: 2020111111 enter shop page
 2022-12-20 07:08:01,731 - app - INFO - user: 2020111111 enter purchasing page
+2024-05-15 01:37:45,140 - app - INFO - 123register successfully
+2024-05-15 01:54:17,781 - app - INFO - user: 123 login
+2024-05-15 01:55:10,047 - app - INFO - user: 123 enter shop page
+2024-05-15 01:55:30,424 - app - INFO - user: 123 enter information page
+2024-05-15 01:55:41,319 - app - INFO - user: 123 enter information page
+2024-05-15 01:56:12,469 - app - INFO - user: 123 enter purchasing page
+2024-05-15 01:56:31,718 - app - INFO - user: 123 add 4 /500g 12 to cart 
+2024-05-15 01:56:49,519 - app - INFO - user: 123 purchase 4 /500g 12
+2024-05-15 01:57:03,959 - app - INFO - user: 123 enter shopping cart page 
+2024-05-15 01:57:13,131 - app - INFO - user: 123 add 4 /500g 12 to cart 
+2024-05-15 01:57:16,167 - app - INFO - user: 123 enter shopping cart page 
+2024-05-15 01:57:29,892 - app - INFO - user: 123 enter order page
+2024-05-15 01:57:30,729 - app - INFO - user: 123 enter collection page
+2024-05-15 01:58:03,777 - app - INFO - 1234register successfully
+2024-05-15 01:58:13,119 - app - INFO - administrator: 1234 login
